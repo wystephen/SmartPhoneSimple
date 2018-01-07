@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/mScro"
+    >
+    <LinearLayout
+        android:id="@+id/mLinear"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:text="---BLE Controller---"
+            android:textAlignment="center"
+            />
+
+        <ListView
+            android:id="@+id/resultList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </ListView>
+
+        <Spinner
+            android:id="@+id/sensorSpeed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+        </Spinner>
+        <Button
+            android:id="@+id/sensorButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="---------BLE TCP----------"
+            android:textAlignment="center"/>
+
+
+
+
+    </LinearLayout>
+</ScrollView>
