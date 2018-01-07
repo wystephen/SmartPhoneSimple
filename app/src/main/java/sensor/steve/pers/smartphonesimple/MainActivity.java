@@ -4,6 +4,7 @@ import android.Manifest;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -19,43 +20,57 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import org.w3c.dom.Text;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.EventListener;
 
 public class MainActivity extends AppCompatActivity {
 
     //--- ble
     TextView bleResText;
-    StringBuilder bleSB = new StringBuilder();
-    Handler bleHandler = new Handler(){
+    StringBuffer bleSB = new StringBuffer();
+    Handler bleHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 //            bleResText.append(msg.)
-            bleResText.setText(bleSB.substring(0));
+            synchronized(this){
+
+                bleResText.setText(bleSB.substring(0));
+            }
+
         }
     };
     Button bleButton;
     boolean bleRunningFlag = false;
-
     BLEReader bleReader;
 
     //-- imu
     Spinner sensorSpeedSpinner;
     TextView sensorResultText;
-    StringBuilder imuSB = new StringBuilder();
-    Handler imuHandler = new Handler(){
+    StringBuffer imuSB = new StringBuffer();
+    Handler imuHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            sensorResultText.setText(imuSB.substring(0));
+            synchronized (this){
+
+                sensorResultText.setText(imuSB.substring(0));
+            }
 
         }
     };
 
     Button imuButton;
     boolean imuRunningFlag = false;
-
-
+    IMUReader imuReader;
 
 
     //-- tcp
@@ -63,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
     EditText portText;
     Button tcpButton;
     boolean tcpRunningFlag = false;
+    Socket socket = null;
+    SensorDataListener<IMUDataElement> imuTCPListener;
+    SensorDataListener<WirelessDataElement> bleTCPListener;
 
 
     @Override
@@ -102,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         bleButton.setOnClickListener(new Button.OnClickListener() {
             int counter = 0;
             int maxCounter = 5;
+
             @Override
             public void onClick(View view) {
                 if (bleRunningFlag) {
@@ -117,20 +136,13 @@ public class MainActivity extends AppCompatActivity {
                     bleReader.startSensor(new SensorDataListener() {
                         @Override
                         public void SensorDataEvent(DataEvent event) throws InterruptedException {
-                            System.out.println(event.getSensorData().convertDatatoString());
-//                            bleResText.append(event.getSensorData().convertDatatoString());
-//                            bleResText.
-//                            Toast.makeText(getApplicationContext(),
-//                                    event.getSensorData().convertDatatoString(),Toast.LENGTH_LONG).show();
+//                            System.out.println(event.getSensorData().convertDatatoString());
 
-                            if(bleSB.length()>0){
+                            if (bleSB.length() > 0) {
 
-                                bleSB.delete(0,bleSB.length()-1);
+                                bleSB.delete(0, bleSB.length() - 1);
                             }
                             bleSB.append(event.getSensorData().convertDatatoString());
-//                            if(bleSB.length()>100){
-//                                bleSB.delete(0,bleSB.indexOf("\n"));
-//                            }
                             bleHandler.sendEmptyMessage(0);
 
                         }
@@ -149,18 +161,31 @@ public class MainActivity extends AppCompatActivity {
         sensorResultText = (TextView) findViewById(R.id.sensorResultText);
         imuButton = (Button) findViewById(R.id.imuButton);
 
+        imuReader = new IMUReader((SensorManager) getSystemService(SENSOR_SERVICE));
 
         imuButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (imuRunningFlag) {
                     // is running
-
+                    imuReader.stopSensor();
 
                     imuRunningFlag = false;
                     imuButton.setText("START");
                 } else {
                     // isn't running
+                    imuReader.startSensor(new SensorDataListener() {
+                        @Override
+                        public void SensorDataEvent(DataEvent event) throws InterruptedException {
+                            System.out.print(event.getSensorData().convertDatatoString());
+                            if (imuSB.length() > 0) {
+                                imuSB.delete(0, imuSB.length() - 1);
+                            }
+                            imuSB.append(event.getSensorData().convertDatatoString());
+                            imuHandler.sendEmptyMessage(0);
+
+                        }
+                    });
 
 
                     imuRunningFlag = true;
@@ -179,14 +204,104 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (tcpRunningFlag) {
                     // is running
+                    try {
 
-                    tcpRunningFlag = false;
-                    tcpButton.setText("START");
+
+                        imuReader.removeDataListener(imuTCPListener);
+                        bleReader.removeDataListener(bleTCPListener);
+                        imuTCPListener = null;
+                        bleTCPListener = null;
+
+                        if (socket != null) {
+
+                            socket.close();
+                            socket= null;
+                        }
+                        tcpRunningFlag = false;
+                        tcpButton.setText("TCPSTART");
+
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
                 } else {
                     // isn't running
+                    new Thread(() -> {
+                        try {
+                            if (socket == null) {
+                                socket = new Socket(ipText.getText().toString(), Integer.valueOf(portText.getText().toString()));
+                                socket.setKeepAlive(true);
+                                if (socket.isConnected()) {
+                                    System.out.println("socket connected");
+                                }
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }).start();
+
+
+                    imuTCPListener = new SensorDataListener<IMUDataElement>() {
+
+                        BufferedWriter writer = null;// new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+                        @Override
+                        public void SensorDataEvent(DataEvent<IMUDataElement> event) throws InterruptedException {
+                            try {
+                                if (socket == null) {
+                                    return;
+                                }
+                                if (writer == null) {
+
+                                    writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                                }
+                                if (socket.isConnected()) {
+                                    writer.write(event.getSensorData().convertDatatoString());
+                                    writer.flush();
+                                }
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    };
+                    bleTCPListener = new SensorDataListener<WirelessDataElement>() {
+
+                        BufferedWriter writer = null;// new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+                        @Override
+                        public void SensorDataEvent(DataEvent<WirelessDataElement> event) throws InterruptedException {
+                            try {
+                                if (socket == null) {
+                                    return;
+                                }
+                                if (writer == null) {
+
+                                    writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                                }
+                                if (socket.isConnected()) {
+                                    writer.write(event.getSensorData().convertDatatoString());
+                                    writer.flush();
+                                }
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                    imuReader.addDataListener(imuTCPListener);
+                    bleReader.addDataListener(bleTCPListener);
+
 
                     tcpRunningFlag = true;
-                    tcpButton.setText("STOP");
+                    tcpButton.setText("TCPSTOP");
+
+
                 }
             }
         });
