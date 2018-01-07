@@ -1,51 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:id="@+id/mScro"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
     <LinearLayout
         android:id="@+id/mLinear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
             android:text="---BLE Controller---"
-            android:textAlignment="center"
-            />
+            android:textAlignment="center" />
 
-        <ListView
-            android:id="@+id/resultList"
+        <TextView
+            android:id="@+id/bleResText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="Empty"/>
 
-        </ListView>
+
+        <Button
+            android:id="@+id/bleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="----IMU Controller---"
+            android:textAlignment="center" />
 
         <Spinner
             android:id="@+id/sensorSpeed"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
+            android:layout_height="wrap_content"
+            android:entries="@array/imu_speed"
+            >
 
         </Spinner>
-        <Button
-            android:id="@+id/sensorButton"
+
+        <TextView
+            android:id="@+id/sensorResultText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Start"/>
+            android:text="empty"/>
+
+        <Button
+            android:id="@+id/imuButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
 
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="---------BLE TCP----------"
-            android:textAlignment="center"/>
+            android:text="---------TCP----------"
+            android:textAlignment="center" />
 
+        <EditText
+            android:id="@+id/ipText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="192.168.3.13"
+            android:hint="IP address"
+            android:singleLine="true"
 
+            />
+
+        <EditText
+            android:id="@+id/portText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="6666"
+            android:hint="IP Port"
+            android:singleLine="true"
+            android:inputType="number"/>
+        <Button
+            android:id="@+id/tcpButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="tcpStart"/>
 
 
     </LinearLayout>
