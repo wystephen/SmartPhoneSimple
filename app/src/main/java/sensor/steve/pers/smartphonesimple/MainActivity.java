@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
                     bleReader.startSensor(new SensorDataListener() {
                         @Override
                         public void SensorDataEvent(DataEvent event) throws InterruptedException {
-//                            System.out.println(event.getSensorData().convertDatatoString());
 
                             if (bleSB.length() > 0) {
 
@@ -177,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                     imuReader.startSensor(new SensorDataListener() {
                         @Override
                         public void SensorDataEvent(DataEvent event) throws InterruptedException {
-                            System.out.print(event.getSensorData().convertDatatoString());
+//                            System.out.print(event.getSensorData().convertDatatoString());
                             if (imuSB.length() > 0) {
                                 imuSB.delete(0, imuSB.length() - 1);
                             }
