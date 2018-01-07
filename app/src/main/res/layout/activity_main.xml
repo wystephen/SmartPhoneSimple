@@ -21,7 +21,7 @@
             android:id="@+id/bleResText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Empty"/>
+            android:text="Empty" />
 
 
         <Button
@@ -40,8 +40,7 @@
             android:id="@+id/sensorSpeed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/imu_speed"
-            >
+            android:entries="@array/imu_speed">
 
         </Spinner>
 
@@ -49,13 +48,13 @@
             android:id="@+id/sensorResultText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="empty"/>
+            android:text="empty" />
 
         <Button
             android:id="@+id/imuButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
+            android:layout_height="wrap_content"
+            android:text="START" />
 
 
         <TextView
@@ -68,9 +67,9 @@
             android:id="@+id/ipText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="192.168.3.13"
             android:hint="IP address"
             android:singleLine="true"
+            android:text="192.168.3.13"
 
             />
 
@@ -78,15 +77,16 @@
             android:id="@+id/portText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="6666"
             android:hint="IP Port"
+            android:inputType="number"
             android:singleLine="true"
-            android:inputType="number"/>
+            android:text="6666" />
+
         <Button
             android:id="@+id/tcpButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="tcpStart"/>
+            android:text="tcpStart" />
 
 
     </LinearLayout>
