@@ -42,8 +42,20 @@ public class MainActivity extends AppCompatActivity {
     //-- imu
     Spinner sensorSpeedSpinner;
     TextView sensorResultText;
+    StringBuilder imuSB = new StringBuilder();
+    Handler imuHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            sensorResultText.setText(imuSB.substring(0));
+
+        }
+    };
+
     Button imuButton;
     boolean imuRunningFlag = false;
+
+
 
 
     //-- tcp
@@ -57,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //--- ble
+        //TODO: BLE
         bleResText = (TextView) findViewById(R.id.bleResText);
         bleButton = (Button) findViewById(R.id.bleButton);
         //// Getting permission...
@@ -132,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //-- imu
+        ///TODO: IMU
         sensorSpeedSpinner = (Spinner) findViewById(R.id.sensorSpeed);
         sensorResultText = (TextView) findViewById(R.id.sensorResultText);
         imuButton = (Button) findViewById(R.id.imuButton);
@@ -158,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        //-- tcp
+        //TODO: tcp
         ipText = (EditText) findViewById(R.id.ipText);
         portText = (EditText) findViewById(R.id.portText);
         tcpButton = (Button) findViewById(R.id.tcpButton);
