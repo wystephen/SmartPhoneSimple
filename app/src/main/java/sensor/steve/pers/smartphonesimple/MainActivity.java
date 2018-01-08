@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 //            bleResText.append(msg.)
-            synchronized(this){
+            synchronized (this) {
 
                 bleResText.setText(bleSB.substring(0));
             }
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            synchronized (this){
+            synchronized (this) {
 
                 sensorResultText.setText(imuSB.substring(0));
             }
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
                         if (socket != null) {
 
                             socket.close();
-                            socket= null;
+                            socket = null;
                         }
                         tcpRunningFlag = false;
                         tcpButton.setText("TCPSTART");
