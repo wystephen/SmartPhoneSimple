@@ -134,7 +134,7 @@ public class IMUReader extends SensorAbstract implements SensorEventListener {
                     break;
             }
             if(counter>=3){
-                imuDataElement.setTime_stamp(((double)sensorEvent.timestamp)/1000.0);
+                imuDataElement.setTime_stamp(((double)System.currentTimeMillis())/1000.0);
                 DataEvent<IMUDataElement> imuDataElementDataEvent = new DataEvent<>(this);
                 imuDataElementDataEvent.setSensorData(imuDataElement);
 
