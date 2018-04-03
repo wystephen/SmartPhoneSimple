@@ -21,8 +21,8 @@
             android:id="@+id/bleResText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Empty"
-            android:lines="6"/>
+            android:lines="6"
+            android:text="Empty" />
 
 
         <Button
@@ -49,8 +49,8 @@
             android:id="@+id/sensorResultText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="empty"
-            android:lines="6"/>
+            android:lines="6"
+            android:text="empty" />
 
         <Button
             android:id="@+id/imuButton"
