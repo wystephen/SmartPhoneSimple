@@ -97,7 +97,7 @@ public class IMUReader extends SensorAbstract implements SensorEventListener {
 //                        System.out.print("," + v);
 //                    }
 //                    System.out.println();
-//                    break;
+                    break;
 
                 case Sensor.TYPE_GYROSCOPE:
                     d = new double[3];
