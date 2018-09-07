@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.BLUETOOTH_ADMIN,
                 Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
                 Manifest.permission.ACCESS_COARSE_LOCATION
+
         };
         boolean permission_ok = true;
         for (String permission : needed_permission) {

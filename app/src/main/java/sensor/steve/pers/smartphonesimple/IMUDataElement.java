@@ -51,7 +51,7 @@ public class IMUDataElement extends SensorDataElement {
     }
 
 
-    private String darray2String(double[] a, int n) {
+    protected String darray2String(double[] a, int n) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < n; ++i) {
             sb.append(a[i]);
