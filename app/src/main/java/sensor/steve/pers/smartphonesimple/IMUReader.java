@@ -10,6 +10,9 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.asin;
+import static java.lang.Math.atan2;
 import static java.lang.Math.sqrt;
 
 /**
@@ -77,6 +80,41 @@ public class IMUReader extends SensorAbstract implements SensorEventListener {
 
     IMUDataElement imuDataElement = null;
     int counter = 0;
+
+    /**
+     * Convert quaternion to euler angle.
+     * @param euler euler angle represent by rad
+     * @param w w in quaternion
+     * @param x x in quaternion
+     * @param y y in quaternion
+     * @param z z in quaternion
+     */
+    public void QuaterniontoEuler(double[] euler,
+                                  double w,double x,double y,double z){
+        if(euler.length != 3){
+            Log.d("Q:",
+                    "size of array to save euler angle should be 3");
+        }
+        double sinr = 2.0 * (w * x + y * z);
+        double cosr = 1.0 - 2.0 * (x * x + y * y);
+        euler[0] = atan2(sinr,cosr); // euler angle of x-axis
+
+        double sinp = 2.0 * (w * y - z * x);
+        if(sinp > 1.0){
+            sinp = 1.0;
+        }
+        if(sinp < -1.0){
+            sinp = -1.0;
+        }
+        euler[1] = asin(sinp); // euler angle of y-axis
+
+        double siny = 2.0 * (w * z + x * y);
+        double cosy = 1.0 - 2.0 * (y * y + z * z);
+        euler[2] = atan2(siny,cosy); // euler angle of z-axis
+
+        return;
+
+    }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
@@ -151,12 +189,16 @@ public class IMUReader extends SensorAbstract implements SensorEventListener {
 
                 case Sensor.TYPE_ROTATION_VECTOR:
                     d = new double[3];
-                    double sin_half_theta = sqrt(1.0 - (sensorEvent.values[3]*sensorEvent.values[3]));
+//                    double sin_half_theta = sqrt(1.0 - (sensorEvent.values[3]*sensorEvent.values[3]));
 
 //                    d[0] = sensorEvent.values
-                    for(int i=0;i<3;++i){
-                        d[i] = sensorEvent.values[i]/sin_half_theta;
-                    }
+//                    for(int i=0;i<3;++i){
+//                        d[i] = sensorEvent.values[i]/sin_half_theta;
+//                    }
+                    QuaterniontoEuler(d,sensorEvent.values[3],
+                            sensorEvent.values[0],
+                            sensorEvent.values[1],
+                            sensorEvent.values[2]);
                     imuDataElement.setAngle(d);
 
                     break;
